@@ -50,6 +50,7 @@ app = gr.Interface(fn=predict, inputs=gr.Image(), outputs="text")  app.launch()
 
 ## Ex 06
 
+```
 from keras.applications.resnet50 import ResNet50
 from keras.applications.resnet50 import preprocess_input 
 from keras.applications.resnet50 import decode_predictions 
@@ -76,7 +77,7 @@ def predict(input): 	input_resized = resize_image(input, 224, 224)
 		for i in range(max_len) 	}	return top_10_predictions
 
 inputs = gr.Image() outputs = gr.Label(num_top_classes=3) app = gr.Interface(fn=predict, inputs=inputs, outputs=outputs) app.launch()
-
+```
 
 # Software installation
 ## Download Miniconda
