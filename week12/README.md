@@ -48,6 +48,36 @@ def predict(input):
 app = gr.Interface(fn=predict, inputs=gr.Image(), outputs="text")  app.launch()
 ```
 
+## Ex 06
+
+from keras.applications.resnet50 import ResNet50
+from keras.applications.resnet50 import preprocess_input 
+from keras.applications.resnet50 import decode_predictions 
+from PIL import Image import numpy as np 
+import gradio as gr 
+model = ResNet50(weights="imagenet", include_top=True)
+
+def resize_image(img, new_w, new_h): 
+	img = Image.fromarray(img) 
+	w, h = img.size
+	w_scale = new_w / w 
+	h_scale = new_h / h 
+	scale = min(w_scale, h_scale) 
+	resized = img.resize((int(w*scale), int(h*scale)), Image.NEAREST) 
+	resized = resized.crop((0, 0, new_w, new_h)) 
+	return resized
+
+def predict(input): 	input_resized = resize_image(input, 224, 224) 
+	img = np.array(input_resized) 	img = img.reshape((1, 224, 224, 3)) 
+	img = preprocess_input(img) 	y_pred = model.predict(img, verbose=0)
+	label = decode_predictions(y_pred)	max_len = len(label[0]) 
+	max_len = 10 if max_len > 10 else max_len 
+	top_10_predictions = {		label[0][i][1]: float(label[0][i][2])
+		for i in range(max_len) 	}	return top_10_predictions
+
+inputs = gr.Image() outputs = gr.Label(num_top_classes=3) app = gr.Interface(fn=predict, inputs=inputs, outputs=outputs) app.launch()
+
+
 # Software installation
 ## Download Miniconda
 
