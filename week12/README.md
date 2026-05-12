@@ -26,6 +26,26 @@ def rgb2gray(input): 	img = Image.fromarray(input) 	img = img.convert('L')
 app = gr.Interface(rgb2gray, gr.Image(image_mode="RGB"), "image") app.launch()
 ```
 
+## Ex 05
+
+from keras.applications.mobilenet import MobileNet 
+from keras.applications.mobilenet import preprocess_input
+
+from keras.applications.mobilenet import decode_predictions 
+from PIL import Image 
+import numpy as np 
+import gradio as gr
+model = MobileNet(weights="imagenet", include_top=True)
+
+def resize_image(img, new_w, new_h): 	img = Image.fromarray(img) 
+	w, h = img.size 	w_scale = new_w / w  	h_scale = new_h / h 
+	scale = min(w_scale, h_scale)  	resized = img.resize((int(w*scale), int(h*scale)), Image.NEAREST)  	resized = resized.crop((0, 0, new_w, new_h))  	return resized
+
+def predict(input): 
+	input_resized = resize_image(input, 224, 224) 	img = np.array(input_resized) 
+	img = img.reshape((1, 224, 224, 3)) img = preprocess_input(img)  	y_pred = model.predict(img, verbose=0)  label = decode_predictions(y_pred) top_prediction = label[0][0]  formatted_string = "%s (%.2f%%)" % (top_prediction[1], top_prediction[2]*100) return formatted_string
+app = gr.Interface(fn=predict, inputs=gr.Image(), outputs="text")  app.launch()
+
 # Software installation
 ## Download Miniconda
 
