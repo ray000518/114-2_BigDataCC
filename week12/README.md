@@ -93,6 +93,22 @@ def predict(input): 	output = classifier.predict([input]) 	predictions = { label
 outputs = gr.Label(num_top_classes=2) examples = ["This movie is good.", "A total waste of my time."] app = gr.Interface(fn=predict, inputs="text", outputs=outputs, examples=xamples) app.launch()
 
 
+## Ex 08
+from keras_nlp.models import GPT2CausalLMPreprocessor 
+from keras_nlp.models import GPT2CausalLM 
+import gradio as gr 
+import keras 
+
+keras.mixed_precision.set_global_policy("mixed_float16") preprocessor = GPT2CausalLMPreprocessor.from_preset( "gpt2_base_en", sequence_length=128,  )
+
+gpt2_1m = GPT2CausalLM.from_preset( "gpt2_base_en", preprocessor=preprocessor )
+
+def predict(input): #使用模型進行預測 
+	output = gpt2_1m.generate(input, max_length=200) 	return output
+
+examples = ["My trip to New York was", "My trip to Taipei was"] app = gr.Interface(fn=predict, inputs="text", outputs="text", examples=examples) app.launch()
+
+
 
 # Software installation
 ## Download Miniconda
